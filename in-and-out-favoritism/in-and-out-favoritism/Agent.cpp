@@ -1,29 +1,27 @@
 #include "Agent.h"
 
-
-
-Agent::Agent()
-{
+Agent::Agent() {
+	srand(time(NULL));
 }
 
-
-Agent::~Agent()
+Move Agent::play(bool same_group) 
 {
-}
-
-void Agent::Play(bool same_group) 
-{
-	if (same_group) 
-	{
-		//cooperate
+	double r;
+	if (same_group){
+		r = ((double) rand() / (RAND_MAX));	
+		return ( r <= 0.6 ) ? -1 : 1;//Strategy first number
 	}
-	else 
-	{
-		//generate random number that will determine if agent cooperates or defects.
+	else {
+		r = ((double) rand() / (RAND_MAX));	
+		return ( r <= 0.1 ) ? -1 : 1; //Strategy second number}	
 	}
 }
 
-void Agent::Update_Fitness(float new_value) 
+void Agent::update_fitness(float new_value) 
 {
-	fitness = new_value;
+	double m;
+	m = fitness * num_of_plays;
+	m += new_value;
+	num_of_plays++;
+	fitness = m / num_of_plays;
 }
