@@ -2,21 +2,22 @@
 #define AGENT_H
 
 #include <stdlib.h>
-#include <time.h>
 #include "Move.h"
+#include "Group.h"
+#include "Strategy.h"
 
 class Agent
 {
 public:
-	int set;
+	Group set;
+	Strategy strategy;
+	float fitness;
+	int num_of_plays;
 	
-	Agent();
+	Agent(Group g);
 	virtual ~Agent() {};
 	Move play(bool same_group);
 	void update_fitness(float new_value);
-private:
-	//Strategy strategy;
-	float fitness;
-	int num_of_plays;
+
 };
 #endif
