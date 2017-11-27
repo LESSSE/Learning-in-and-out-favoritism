@@ -2,7 +2,8 @@
 #include "Agent.h"
 #include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
+#include <iostream>
+#include <string>
 #include <cmath>
 #include <algorithm>
 
@@ -39,11 +40,11 @@ void getFitness(Interaction* interaction, Agent** agents, int agent){
 		if(a == agent)
 			continue;
 		else{
-			if(agents[a]->set == agents[agent]->set){
+			if((agents[a]->set == agents[agent]->set) && (((double) rand())/ (RAND_MAX) <= A_IN)){
 				interaction->play(agents[agent],agents[a]);
 				continue;
 			}	
-			if( (((double) rand()) / (RAND_MAX)) < A_OUT){
+			if( (((double) rand()) / (RAND_MAX)) <= A_OUT){
 				interaction->play(agents[agent],agents[a]);
 				continue;
 			}
@@ -51,22 +52,79 @@ void getFitness(Interaction* interaction, Agent** agents, int agent){
 	}	
 }
 
-int main(){
+void show_usage(std::string name){
+	std::cerr << "Usage: " << name << "[-g|-h] tempetation_to_defect suckers_payoff" << std::endl; 
+	std::cerr << "Options:" << std::endl;
+	std::cerr << "\t-h\t\tShow this hepl message" << std::endl; 
+	std::cerr << "\t-g\t\tGroup number" << std::endl;
+       	std::cerr << "\t-t\t\tType of output:\n" << "\t\td\t distribution\n" << "\t\tg\tpachorialism global evolution\n" << "\t\tl\tparochialism group evolution\n" << std::endl;  	
+}
+
+
+float average_parochialism(Agent** agents, int size){
+	float par;
+	for(int i = 0; i < size; i++){
+		par = (par * i + agents[i]->strategy.first/agents[i]->strategy.second)/(i+1);
+	}
+	return par;
+}
+
+float average_group_parochialism(Agent** agents, int size, int group){
+	float par;
+	int n=0;
+	for(int i = 0; i < size; i++){
+		if(agents[i]->set == group){
+			par = (par * n + agents[i]->strategy.first/agents[i]->strategy.second)/(n+1);
+			n++;
+		}
+	}
+	return par;
+}
+
+
+int main(int argc, char* argv[]){
 	int N_GROUPS = 20; 
 	int* groups;
 	int a1, a2;
+	char out_type = 'd';
 	Agent** agents;
-	CoopGame* pris_dilemma = new CoopGame(1.5, -0.5);
+	double s, t;
+	//CoopGame* pris_dilemma = new CoopGame(1.2, -0.2);
 	//CoopGame* stag_hunt = new CoopGame(0.5, -0.5);
 	//CoopGame* snowdrift = new CoopGame(1.5, 0.5);
 
-	Interaction* interaction = pris_dilemma;
+	Interaction* interaction;
+
+	if(argc < 3){
+		show_usage(argv[0]);
+		return 1;
+	}
+
+	s = atof(argv[argc-2]);
+	t = atof(argv[argc-1]);
+	interaction = new CoopGame(s,t);
+
+	std::cerr << s <<" "<< t << std::endl;
+
+	for(int i = 1; i < argc-2; i++){
+		std::string arg = argv[i];
+		if ((arg == "-h")){
+			show_usage(argv[0]);
+			return 0;
+		}
+		else if ((arg == "-g")){
+			N_GROUPS = atoi(argv[++i]);
+		}
+		else if ((arg == "-t")){
+			out_type = argv[++i][0];
+		}
+	}
 
 	srand(time(NULL));       	
 	groups = (int*) malloc (N_GROUPS * sizeof(int)); 
 	agents = (Agent**) malloc( N_AGENTS * sizeof(Agent *));
 	
-	printf("______INITIALIZAITON_____");
+	std::cerr << "______INITIALIZAITON_____" << std::endl;
 
 	for(int i = 0; i < N_GROUPS; i++){
 		groups[i] = 0;
@@ -84,31 +142,40 @@ int main(){
 	}
 
 	for(int i = 0; i < N_GROUPS; i++){
-		printf("GROUP %d: %d\n", i, groups[i]);
+		std::cerr << "GROUP " <<  i << ":\t"<< groups[i] << std::endl;
 	}
 
-	printf("______TRAIN_____");
-
+	std::cerr << "______TRAIN_____" << std::endl;
+	
 	for(int i = 0; i < N_STEPS; i++){
 		int r;
 		a1 = rand() % N_AGENTS;
 		getFitness(interaction, agents,a1);
 		a2 = rand() % N_AGENTS; 
 		getFitness(interaction, agents,a2);
+		
 		r = ((double) rand() / (RAND_MAX));	
+		
+		//Reinforcement Learning
 		if( r <= func(agents[a2]->fitness,agents[a1]->fitness)){
 			agents[a1]->strategy.first = agents[a2]->strategy.first + dev();
 			agents[a1]->strategy.second = agents[a2]->strategy.second + dev(); 
-			printf("STRATEGY CHANGE (%f,%f) (%f,%f)\n",agents[a1]->strategy.first, agents[a1]->strategy.second + dev(), agents[a2]->strategy.first, agents[a2]->strategy.second);	
+			//("STRATEGY CHANGE (%f,%f) (%f,%f)\n",agents[a1]->strategy.first, agents[a1]->strategy.second + dev(), agents[a2]->strategy.first, agents[a2]->strategy.second);
+			if(out_type == 'g'){
+				std::cout << i << "\t" << average_parochialism(agents,N_AGENTS) << std::endl;
+			}
+			else if(out_type == 'l'){
+				for(int j = 0; j < N_GROUPS; j++){
+					std::cout << i << "\t" << j << "\t" << average_group_parochialism(agents,N_AGENTS,j) << std::endl;
+				}
+			}	
 		}
 	}
 
-	for(int i = 0; i < N_AGENTS; i++){
-		printf("GROUP %d\n", agents[i]->set);
-		printf("STRATEGY (%f,%f)\n", agents[i]->strategy.first, agents[i]->strategy.second);
-		printf("NUM_PLAYS %d\n", agents[i]->num_of_plays);
-		printf("FITNESS %f\n", agents[i]->fitness);
-		printf("___________________________\n");
+	if(out_type == 'd'){
+			for(int i = 0; i < N_AGENTS; i++){
+				std::cout <<  agents[i]->strategy.first << "\t" << agents[i]->strategy.second << std::endl;
+		}
 	}
 	return 0;
 }

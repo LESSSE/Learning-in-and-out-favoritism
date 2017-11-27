@@ -6,10 +6,10 @@
 class CoopGame : public Interaction 
 {
 private:
-	float p, r, s, t;
+	double p, r, s, t;
 
 public: 
-	CoopGame(float new_t, float new_s);
+	CoopGame(double new_t, double new_s);
 	virtual ~CoopGame() {};
 	float game(Move p1, Move p2);
 };

@@ -5,7 +5,7 @@ CXXFLAGS=-Wall
 all: main.exe
 
 main.exe: agent interaction move coopgame
-	$(CXX) $(CXXFLAGS) -o $@ *.h *.cpp
+	$(CXX) $(CXXFLAGS) -o in-out-fav *.h *.cpp
 
 agent: Agent.cpp Agent.h
 
@@ -16,4 +16,8 @@ coopgame: CoopGame.cpp CoopGame.h
 move: Move.cpp Move.h
 
 clean:
-	$(RM) main.exe 
+	$(RM) in-out-fav 
+
+cleandata:
+	$(RM) data/* 
+

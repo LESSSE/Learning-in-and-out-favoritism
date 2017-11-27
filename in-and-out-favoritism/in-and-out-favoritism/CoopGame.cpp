@@ -1,6 +1,6 @@
 #include "CoopGame.h"
 
-CoopGame::CoopGame(float new_t, float new_s){
+CoopGame::CoopGame(double new_t, double new_s){
 	t = new_t;
 	s = new_s;
 	r = 1;
