@@ -9,7 +9,7 @@
 
 //NUMBERS
 #define N_AGENTS 1000
-#define N_STEPS 100000
+#define N_STEPS 10000
 #define N_TRAIN 10000
 
 //PROBABILITIES

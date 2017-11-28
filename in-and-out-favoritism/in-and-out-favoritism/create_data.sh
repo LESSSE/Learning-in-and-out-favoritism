@@ -3,13 +3,35 @@
 make
 
 #Prisioners Game
+begin=$(date +%s)
 ./in-out-fav -g 3 -t d -0.2 1.2 > data/PG-3-d.data
-./in-out-fav -g 5 -t d -0.2 1.2 > data/PG-5-d.data
-./in-out-fav -g 10 -t d -0.2 1.2 > data/PG-10-d.data
+end=$(date +%s)
+echo $(expr $end - $begin)
 
+begin=$(date +%s)
+./in-out-fav -g 5 -t d -0.2 1.2 > data/PG-5-d.data
+end=$(date +%s)
+echo $(expr $end - $begin)
+
+begin=$(date +%s)
+./in-out-fav -g 10 -t d -0.2 1.2 > data/PG-10-d.data
+end=$(date +%s)
+echo $(expr $end - $begin)
+
+begin=$(date +%s)
 ./in-out-fav -g 3 -t g -0.2 1.2 > data/PG-3-g.data
+end=$(date +%s)
+echo $(expr $end - $begin)
+
+begin=$(date +%s)
 ./in-out-fav -g 5 -t g -0.2 1.2 > data/PG-5-g.data
+end=$(date +%s)
+echo $(expr $end - $begin)
+
+begin=$(date +%s)
 ./in-out-fav -g 10 -t g -0.2 1.2 > data/PG-10-g.data
+end=$(date +%s)
+echo $(expr $end - $begin)
 
 ./in-out-fav -g 3 -t l -0.2 1.2 > data/PG-3-l.data
 ./in-out-fav -g 5 -t l -0.2 1.2 > data/PG-5-l.data
