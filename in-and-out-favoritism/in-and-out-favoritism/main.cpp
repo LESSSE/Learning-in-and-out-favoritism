@@ -53,11 +53,11 @@ void getFitness(Interaction* interaction, Agent** agents, int agent){
 }
 
 void show_usage(std::string name){
-	std::cerr << "Usage: " << name << "[-g|-h] tempetation_to_defect suckers_payoff" << std::endl; 
-	std::cerr << "Options:" << std::endl;
-	std::cerr << "\t-h\t\tShow this hepl message" << std::endl; 
-	std::cerr << "\t-g\t\tGroup number" << std::endl;
-       	std::cerr << "\t-t\t\tType of output:\n" << "\t\td\t distribution\n" << "\t\tg\tpachorialism global evolution\n" << "\t\tl\tparochialism group evolution\n" << std::endl;  	
+	std::cerr << "Usage: " << name << "[-h|-g|-t] tempetation_to_defect suckers_payoff" << std::endl; 
+	std::cerr << "  Options:" << std::endl;
+	std::cerr << "\t-h\t\tShow this help message" << std::endl; 
+	std::cerr << "\t-g\t\tNumber of groups" << std::endl;
+       	std::cerr << "\t-t\t\tType of output:\n" << "\t\td\t\t distribution\n" << "\t\tg\t\tpachorialism global evolution\n" << "\t\tl\t\tparochialism group evolution\n" << std::endl;  	
 }
 
 
